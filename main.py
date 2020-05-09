@@ -5,6 +5,7 @@ from selenium import webdriver
 import time
 import pandas as pd
 import csv
+import requests
 
 
 def main():
@@ -40,6 +41,8 @@ def main():
     result_links = clean_list(simp_links, simp_ignore)
     print(result_links)
     print(len(result_links))
+
+
 
 def start_firefox(gecko_path):
     return webdriver.Firefox(executable_path=gecko_path)
@@ -105,6 +108,11 @@ def close_firefox(driver):
     time.sleep(5)
     # driver.quit()
     driver.quit()
+
+
+def download_pages(links):
+
+    return
 
 
 if __name__ == "__main__":
