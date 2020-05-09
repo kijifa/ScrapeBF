@@ -10,27 +10,36 @@ import csv
 def main():
     urlpage = "https://www.bezfrazi.cz"
     links_path = './data/links.csv'
+    ignore_links = 'ignore_links.txt'
     gecko_path = r'./gecko/geckodriver.exe'
     max_page = 200
 
     print(urlpage)
 
-    driver = start_firefox(gecko_path)
+    #driver = start_firefox(gecko_path)
     # get web page
-    driver.get(urlpage)
+    #driver.get(urlpage)
 
     # Load all pribehy
-    load_all_pribehy(driver, max_page)
+    #load_all_pribehy(driver, max_page)
 
     # Get_Links
-    links = get_links_list(driver)
+    #links = get_links_list(driver)
 
     # Save links to csv file
-    save_list_to_csv(links, links_path)
+    #ave_list_to_csv(links, links_path)
 
     # Close Firefox browser
-    close_firefox(driver)
+    #close_firefox(driver)
+    links = load_csv(links_path)
+    ignore_list = load_csv(ignore_links)
 
+    simp_links = simpler_list(links)
+    simp_ignore = simpler_list(ignore_list)
+
+    result_links = clean_list(simp_links, simp_ignore)
+    print(result_links)
+    print(len(result_links))
 
 def start_firefox(gecko_path):
     return webdriver.Firefox(executable_path=gecko_path)
@@ -67,6 +76,28 @@ def save_list_to_csv(list, path):
         for item in list:
             file.write(item)
             file.write('\n')
+
+
+def load_csv(file):
+    with open(file, newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+
+    return data
+
+
+def simpler_list(listin):
+    result_list = []
+
+    for item in listin:
+        result_list.append(item[0])
+
+    return result_list
+
+
+def clean_list(listA, listB):
+    result_list = set(listA) - set(listB)
+    return result_list
 
 
 def close_firefox(driver):
