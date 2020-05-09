@@ -23,7 +23,7 @@ def main():
     load_all_pribehy(driver, max_page)
 
     # Get_Links
-    links = get_links_from_pribehy(driver)
+    links = get_links_list(driver)
 
     # Save links to csv file
     save_list_to_csv(links, links_path)
@@ -53,7 +53,7 @@ def load_all_pribehy(driver, max_page):
             break
 
 
-def get_links_from_pribehy(driver, max_page):
+def get_links_list(driver):
     elements = driver.find_elements_by_xpath("//a[@href]")
     links = []
     for elem in elements:
