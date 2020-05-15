@@ -5,7 +5,8 @@ from selenium import webdriver
 import time
 import pandas as pd
 import csv
-import requests
+from urllib import request
+import re
 
 
 def main():
@@ -13,6 +14,7 @@ def main():
     links_path = './data/links.csv'
     ignore_links = 'ignore_links.txt'
     gecko_path = r'./gecko/geckodriver.exe'
+    articles_folder = './data/articles/'
     max_page = 200
 
     print(urlpage)
@@ -32,16 +34,24 @@ def main():
 
     # Close Firefox browser
     #close_firefox(driver)
+
+    # Links loaded from csv file
     links = load_csv(links_path)
+
+    # List links for ignore
     ignore_list = load_csv(ignore_links)
 
+    # Simpler link. Destroy nested list
     simp_links = simpler_list(links)
     simp_ignore = simpler_list(ignore_list)
 
+    # Final links list
     result_links = clean_list(simp_links, simp_ignore)
     print(result_links)
-    print(len(result_links))
 
+    # Download files
+    sample_links = ['https://www.bezfrazi.cz/nahradnik/', 'https://www.bezfrazi.cz/fotoalbum-v-zrcadle/']
+    download_articles = download_pages(sample_links, articles_folder)
 
 
 def start_firefox(gecko_path):
@@ -110,9 +120,33 @@ def close_firefox(driver):
     driver.quit()
 
 
-def download_pages(links):
+def download_pages(links, articles_folder):
+    for link in links:
+        print(link)
+        # Save page to variable
+        resp = request.urlopen(link).read().decode('utf8')
+        # Convert html page to soup
+        soup = BeautifulSoup(resp, 'html.parser')
+        # Extract article title as article name
+        article_name = extract_title(soup)
+        print(article_name)
+    return
+
+
+def download_page():
 
     return
+
+
+def extract_title(page):
+    # Find title tag on page, limited on one
+    soup_title = page.find_all('h1', {"class": "post-title"}, limit=1)
+    # Clean title
+    title_str = re.search('>.*<', str(soup_title))
+    print(title_str)
+    removed_tag = soup_title[2:]
+    title = removed_tag
+    return title
 
 
 if __name__ == "__main__":
