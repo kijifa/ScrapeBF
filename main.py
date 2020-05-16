@@ -1,59 +1,97 @@
-# import libraries
-import urllib.request
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import time
-import pandas as pd
+from urllib import request
 import csv
+import time
 
 
 def main():
     urlpage = "https://www.bezfrazi.cz"
     links_path = './data/links.csv'
+    ignore_links = 'ignore_links.txt'
     gecko_path = r'./gecko/geckodriver.exe'
+    articles_folder = './data/articles/'
     max_page = 200
 
     print(urlpage)
 
-    driver = start_firefox(gecko_path)
+    #driver = start_firefox(gecko_path)
     # get web page
-    driver.get(urlpage)
+    #driver.get(urlpage)
 
     # Load all pribehy
-    load_all_pribehy(driver, max_page)
+    #load_all_pribehy(driver, max_page)
 
     # Get_Links
-    links = get_links_list(driver)
+    #links = get_links_list(driver)
 
     # Save links to csv file
-    save_list_to_csv(links, links_path)
+    #ave_list_to_csv(links, links_path)
 
     # Close Firefox browser
-    close_firefox(driver)
+    #close_firefox(driver)
+
+    # Links loaded from csv file
+    links = load_csv(links_path)
+
+    # List links for ignore
+    ignore_list = load_csv(ignore_links)
+
+    # Simpler link. Destroy nested list
+    simp_links = simpler_list(links)
+    simp_ignore = simpler_list(ignore_list)
+
+    # Final links list
+    result_links = clean_list(simp_links, simp_ignore)
+    #print(result_links)
+
+    # Download files
+    sample_links = ['https://www.bezfrazi.cz/nahradnik/', 'https://www.bezfrazi.cz/fotoalbum-v-zrcadle/']
+    download_articles = download_pages(sample_links, articles_folder)
 
 
 def start_firefox(gecko_path):
+    """
+    Start web browser
+    :param gecko_path: path to gecko driver for web driver
+    :return:
+    """
     return webdriver.Firefox(executable_path=gecko_path)
 
 
 def load_all_pribehy(driver, max_page):
+    """
+    Load pages with Pribehy, clicking to next button
+    :param driver: web browser driver
+    :param max_page: max number of clicking next button
+    :return:
+    """
     # execute script to scroll down the page
     driver.find_element_by_link_text("Příběhy").click()
+    # wait for load all elements on page
     time.sleep(10)
 
+    # init page for while
     page = 1
+    # rolling over set number of pages
     while page < max_page:
+        # Scroll to bottom page
         driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        # Try to find Next button. If not found break loop
         try:
             driver.find_element_by_id("read-next-button").click()
             time.sleep(10)
             page += 1
         except:
-            # page = 9999
             break
 
 
 def get_links_list(driver):
+    """
+
+    :param driver:
+    :return:
+    """
     elements = driver.find_elements_by_xpath("//a[@href]")
     links = []
     for elem in elements:
@@ -62,18 +100,130 @@ def get_links_list(driver):
     return links
 
 
-def save_list_to_csv(list, path):
+def save_list_to_csv(input_list, path):
+    """
+    Save list into csv file
+    :param input_list: list you wanna save to csv
+    :param path: path to csv file
+    :return:
+    """
     with open(path, 'w') as file:
-        for item in list:
+        for item in input_list:
             file.write(item)
             file.write('\n')
 
 
+def load_csv(file):
+    """
+    Loading csv file into variable
+    :param file:
+    :return:
+    """
+    with open(file, newline='') as f:
+        reader = csv.reader(f)
+        data = list(reader)
+
+    return data
+
+
+def simpler_list(input_list):
+    """
+    Remove nested from list
+    :param input_list: input nested list
+    :return: list extracted from nested
+    """
+    result_list = []
+
+    for item in input_list:
+        result_list.append(item[0])
+
+    return result_list
+
+
+def clean_list(listA, listB):
+    """
+    Remove elements listB from listA
+    :param listA: base list
+    :param listB: list of elements should be remove from listA
+    :return: elements from listA minus listB
+    """
+    result_list = set(listA) - set(listB)
+    return result_list
+
+
 def close_firefox(driver):
+    """
+    Closing web browser
+    :param driver: web browser driver
+    :return: empty return
+    """
     # sleep for 30s
     time.sleep(5)
     # driver.quit()
     driver.quit()
+
+
+def download_pages(links, articles_folder):
+    """
+    Process download articles page
+    :param links: list of url links
+    :param articles_folder: path to folder for articles save
+    :return:
+    """
+    for link in links:
+        print(link)
+        # Save page to variable
+        resp = request.urlopen(link).read().decode('utf8')
+        # Convert html page to soup
+        soup = BeautifulSoup(resp, 'html.parser')
+        # Extract article title as article name
+        article_name = extract_title(soup)
+        print(article_name)
+    return
+
+
+def download_page():
+
+    return
+
+
+def extract_title(page):
+    """
+    Extracting title from downloaded page
+    :param page: html code from webpage
+    :return: clean title of article, no czech signs, no whitespace
+    """
+    # Extract title from html page
+    title_str = page.find('h1', {"class": "post-title"}).text
+    # Clean title
+    clean_title = clean_czech_sign(title_str)
+    return clean_title
+
+
+def clean_czech_sign(text):
+    """
+    Cleaning czech sign in text
+    :param text: text where you wanna replace czech signs
+    :return: cleaned text
+    """
+    output = (
+        text.replace(' ', '_')
+        .replace('á', 'a')
+        .replace('č', 'c')
+        .replace('ď', 'd')
+        .replace('é', 'e')
+        .replace('ě', 'e')
+        .replace('í', 'i')
+        .replace('ň', 'n')
+        .replace('ó', 'o')
+        .replace('ř', 'r')
+        .replace('š', 's')
+        .replace('ť', 't')
+        .replace('ú', 'u')
+        .replace('ů', 'u')
+        .replace('ž', 'z')
+    )
+    return output
 
 
 if __name__ == "__main__":
