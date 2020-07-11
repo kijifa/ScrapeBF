@@ -46,11 +46,10 @@ def main():
 
     # Final links list
     result_links = clean_list(simp_links, simp_ignore)
-    #print(result_links)
 
     # Download files
-    sample_links = ['https://www.bezfrazi.cz/nahradnik/', 'https://www.bezfrazi.cz/fotoalbum-v-zrcadle/']
-    download_articles = download_pages(sample_links, articles_folder)
+    # sample_links = ['https://www.bezfrazi.cz/nahradnik/', 'https://www.bezfrazi.cz/fotoalbum-v-zrcadle/']
+    download_pages(result_links, articles_folder)
 
 
 def start_firefox(gecko_path):
@@ -184,7 +183,6 @@ def download_pages(links, articles_folder):
         # Save page locally
         save_article_page(link, article_name, articles_folder)
         time.sleep(10)
-    return
 
 
 def save_article_page(link, name, articles_folder):
@@ -199,8 +197,6 @@ def save_article_page(link, name, articles_folder):
 
     # Save html file
     save_htm_file(html, articles_folder, name)
-
-    return
 
 
 def save_htm_file(content, folder, name):
@@ -218,8 +214,6 @@ def save_htm_file(content, folder, name):
     f = open(file_path, 'w', encoding='utf8')
     f.write(content)
     f.close()
-
-    return
 
 
 def extract_title(page):
@@ -243,20 +237,20 @@ def clean_czech_sign(text):
     """
     output = (
         text.replace(' ', '_')
-        .replace('á', 'a')
-        .replace('č', 'c')
-        .replace('ď', 'd')
-        .replace('é', 'e')
-        .replace('ě', 'e')
-        .replace('í', 'i')
-        .replace('ň', 'n')
-        .replace('ó', 'o')
-        .replace('ř', 'r')
-        .replace('š', 's')
-        .replace('ť', 't')
-        .replace('ú', 'u')
-        .replace('ů', 'u')
-        .replace('ž', 'z')
+            .replace('á', 'a')
+            .replace('č', 'c')
+            .replace('ď', 'd')
+            .replace('é', 'e')
+            .replace('ě', 'e')
+            .replace('í', 'i')
+            .replace('ň', 'n')
+            .replace('ó', 'o')
+            .replace('ř', 'r')
+            .replace('š', 's')
+            .replace('ť', 't')
+            .replace('ú', 'u')
+            .replace('ů', 'u')
+            .replace('ž', 'z')
     )
     return output
 

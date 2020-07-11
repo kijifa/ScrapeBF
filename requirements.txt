@@ -3,4 +3,3 @@ requests
 selenium
 chromedriver-install
 pandas
-pywebcopy
