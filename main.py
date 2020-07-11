@@ -48,7 +48,12 @@ def main():
     result_links = clean_list(simp_links, simp_ignore)
 
     # Download files
-    # sample_links = ['https://www.bezfrazi.cz/nahradnik/', 'https://www.bezfrazi.cz/fotoalbum-v-zrcadle/']
+    #sample_links = ['https://www.bezfrazi.cz/fotoalbum-v-zrcadle/',
+    #                'https://www.bezfrazi.cz/pocatek/',
+    #                'https://www.bezfrazi.cz/mam-to-jinak/',
+    #                'https://www.bezfrazi.cz/no-more/'
+    #                ]
+
     download_pages(result_links, articles_folder)
 
 
@@ -258,6 +263,25 @@ def clean_czech_sign(text):
             .replace('ú', 'u')
             .replace('ů', 'u')
             .replace('ž', 'z')
+            .replace('Á', 'A')
+            .replace('Č', 'C')
+            .replace('Ď', 'D')
+            .replace('É', 'E')
+            .replace('Ě', 'E')
+            .replace('Í', 'I')
+            .replace('Ň', 'N')
+            .replace('Ó', 'O')
+            .replace('Ř', 'R')
+            .replace('Š', 'S')
+            .replace('Ť', 'T')
+            .replace('Ú', 'U')
+            .replace('Ů', 'U')
+            .replace('Ž', 'Z')
+            .replace('"', '')
+            .replace('?', '')
+            .replace('!', '')
+            .replace('.', '')
+            .replace(',', '')
     )
     return output
 

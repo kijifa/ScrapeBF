@@ -15,4 +15,5 @@ http://www.algon.mazdadealer.cz/vozy-k-odberu
 https://www.bezfrazi.cz/
 https://www.bezfrazi.cz/ochrana-osobnich-udaju
 https://www.bezfrazi.cz/kontakt
-https://www.bezfrazi.cz/obsah/
+https://www.bezfrazi.cz/obsah
+http://www.algon.mazdadealer.cz/vozy-k-odberu/
