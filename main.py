@@ -224,9 +224,16 @@ def extract_title(page):
     """
     # Extract title from html page
     title_str = page.find('h1', {"class": "post-title"}).text
+    # Extract author from html page
+    author_str = page.find('h3', {"class": "title-author"}).text
     # Clean title
     clean_title = clean_czech_sign(title_str)
-    return clean_title
+    # Clean author
+    clean_author = clean_czech_sign(author_str)
+
+    #Assemble name
+    article_name = clean_title + '-' + clean_author
+    return article_name
 
 
 def clean_czech_sign(text):
