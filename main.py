@@ -1,11 +1,15 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from urllib import request
+from urllib.request import urlopen
 import csv
+import logging
 import time
 
 
 def main():
+    logging.basicConfig(filename='./log/loging.log', level=logging.DEBUG)
+
     urlpage = "https://www.bezfrazi.cz"
     links_path = './data/links.csv'
     ignore_links = 'ignore_links.txt'
@@ -13,23 +17,22 @@ def main():
     articles_folder = './data/articles/'
     max_page = 200
 
-    print(urlpage)
-
-    #driver = start_firefox(gecko_path)
+    logging.info('Start')
+    driver = start_firefox(gecko_path)
     # get web page
-    #driver.get(urlpage)
+    driver.get(urlpage)
 
     # Load all pribehy
-    #load_all_pribehy(driver, max_page)
+    load_all_pribehy(driver, max_page)
 
     # Get_Links
-    #links = get_links_list(driver)
+    links = get_links_list(driver)
 
     # Save links to csv file
-    #ave_list_to_csv(links, links_path)
+    save_list_to_csv(links, links_path)
 
     # Close Firefox browser
-    #close_firefox(driver)
+    close_firefox(driver)
 
     # Links loaded from csv file
     links = load_csv(links_path)
@@ -178,11 +181,43 @@ def download_pages(links, articles_folder):
         soup = BeautifulSoup(resp, 'html.parser')
         # Extract article title as article name
         article_name = extract_title(soup)
-        print(article_name)
+        # Save page locally
+        save_article_page(link, article_name, articles_folder)
+        time.sleep(10)
     return
 
 
-def download_page():
+def save_article_page(link, name, articles_folder):
+    """
+    Method saving html page localy
+    :param link: link to page
+    :param name: name of local file
+    :return:
+    """
+    # Open and read url with article
+    html = urlopen(link).read().decode('utf-8')
+
+    # Save html file
+    save_htm_file(html, articles_folder, name)
+
+    return
+
+
+def save_htm_file(content, folder, name):
+    """
+    Save html file to set folder
+    :param content: content you wanna save
+    :param folder: destination folder
+    :param name: name of file output
+    :return:
+    """
+    # Assemble file path
+    file_path = folder + '/' + name + '.htm'
+
+    # Create file and write content
+    f = open(file_path, 'w', encoding='utf8')
+    f.write(content)
+    f.close()
 
     return
 
