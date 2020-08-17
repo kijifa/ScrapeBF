@@ -104,6 +104,12 @@ def get_links_list(driver):
     for elem in elements:
         links.append(elem.get_attribute("href"))
 
+    # Add Oktagon links
+    links.append("https://www.bezfrazi.cz/diky-bohu/")
+    links.append("https://www.bezfrazi.cz/pocatek/")
+    links.append("https://www.bezfrazi.cz/no-more/")
+    links.append("https://www.bezfrazi.cz/mam-to-jinak/")
+
     return links
 
 
